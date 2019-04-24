@@ -56,7 +56,20 @@ jinja_env.add_extension(formencode_jinja2.formfill)
 #
 # username = "Guest"
 #
-@app.route('/',methods=['GET', 'POST'])
+
+@app.route('/desh',methods=['GET', 'POST'])
+def front():
+    if request.method == "POST":
+        if request.form['submit'] == 'login':
+            return redirect(url_for('login'))
+        elif request.form['submit'] == 'reg':
+            return redirect(url_for('reg'))
+        elif request.form['submit'] == 'contact':
+            return  redirect(url_for('login'))
+
+    return render_template('home.html')
+
+@app.route('/desh',methods=['GET', 'POST'])
 def home():
     if request.method == "POST":
         if request.form['submit'] == 'Sign In':
@@ -190,6 +203,32 @@ def login():
 
     return render_template('login.html')
 
+
+@app.route('/registration', methods=['GET', 'POST'])
+def reg():
+    unsuccessful = 'Please check your info'
+    successful = 'Registration successful'
+    mat="Password doesnot match"
+    if request.method == 'POST':
+        mail = request.form['email']
+        password = request.form['psw']
+        user=request.form['name']
+        batch=request.form['batch']
+        match=request.form['psw-repeat']
+        if(password !=match):
+            return render_template('registration.html', us=mat)
+        elif(password==match):
+            try:
+
+                user = auth.create_user_with_email_and_password(mail, password)
+                auth.get_account_info(user['idToken'])
+
+                return redirect(url_for('home'))
+            except:
+                return render_template('registration.html', us=unsuccessful)
+
+
+    return render_template('registration.html')
 
 
 # @app.route('/signup_helper', methods=["GET", "POST"])
