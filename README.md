@@ -57,8 +57,6 @@ List all the technologies and libraries used in your project.
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/your-repository.git
-```
-
 # Usage
 Run the application:
 ```bash
