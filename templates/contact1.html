@@ -27,9 +27,9 @@
 </head>
 <body>
 
-
+{{ s }}
 	<div class="container-contact100">
-
+       <form action="/contact" method="post">
 		<div class="wrap-contact100">
 			<form class="contact100-form validate-form">
 				<span class="contact100-form-title">
@@ -37,22 +37,22 @@
 				</span>
 
 				<div class="wrap-input100 validate-input" data-validate="Please enter your name">
-					<input class="input100" type="text" name="name" placeholder="Full Name">
+					<input class="input100" type="text" name="name" placeholder="Full Name" required >
 					<span class="focus-input100"></span>
 				</div>
 
-				<div class="wrap-input100 validate-input" data-validate = "Please enter your email: e@a.x">
-					<input class="input100" type="text" name="email" placeholder="E-mail">
+				<div class="wrap-input100 validate-input" data-validate = "Please enter your email: e@a.x" >
+					<input class="input100" type="text" name="email" placeholder="E-mail" required>
 					<span class="focus-input100"></span>
 				</div>
 
-				<div class="wrap-input100 validate-input" data-validate = "Please enter your phone">
-					<input class="input100" type="text" name="phone" placeholder="Phone">
+				<div class="wrap-input100 validate-input" data-validate = "Please enter your phone" >
+					<input class="input100" type="text" name="phone" placeholder="Phone" required>
 					<span class="focus-input100"></span>
 				</div>
 
 				<div class="wrap-input100 validate-input" data-validate = "Please enter your message">
-					<textarea class="input100" name="message" placeholder="Your Message"></textarea>
+					<textarea class="input100" name="message" placeholder="Your Message" required></textarea>
 					<span class="focus-input100"></span>
 				</div>
 

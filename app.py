@@ -56,8 +56,37 @@ jinja_env.add_extension(formencode_jinja2.formfill)
 #
 # username = "Guest"
 #
+@app.route('/booklist/<name>',methods=['GET', 'POST'])
+def showbook(name):
 
-@app.route('/desh',methods=['GET', 'POST'])
+    return render_template('test.html',name=name)
+
+@app.route('/profile/<name>',methods=['GET', 'POST'])
+def profile(name):
+    data = db.child("User").get()
+    d = data.val()
+    l = []
+    for x, y in d.items():
+        if (x == name):
+            for val in y.values():
+                i = 0;
+                for tt in val.values():
+                    if (i == 0):
+                        l.append("Batch :" + tt)
+                    if (i == 1):
+                        l.append("Email : " + tt)
+                    if(i==2):
+                        l.append("Name : "+tt)
+                    if(i==3):
+                        l.append("Phone : "+tt)
+
+                    i = i + 1
+
+
+    return render_template('profile.html',name=name,t=l)
+
+
+@app.route('/',methods=['GET', 'POST'])
 def front():
     if request.method == "POST":
         if request.form['submit'] == 'login':
@@ -68,6 +97,13 @@ def front():
             return  redirect(url_for('login'))
 
     return render_template('home.html')
+
+@app.route('/contact',methods=['GET', 'POST'])
+def contact():
+    su="Thanks for texting!"
+    if request.method == "POST":
+        return render_template('contact1.html',s=su)
+    return render_template('contact1.html')
 
 @app.route('/desh',methods=['GET', 'POST'])
 def home():
@@ -83,7 +119,7 @@ def home():
 
 
 @app.route('/index.html', methods=['GET', 'POST'])
-def index():
+def index(name):
     if request.method == "POST":
         if request.form['submit'] == 'Sign In':
             return redirect(url_for('login'))
@@ -93,13 +129,24 @@ def index():
             return  redirect(url_for('login'))
     return render_template('index.html')
 
+@app.route('/index/<name>', methods=['GET', 'POST'])
+def index1(name):
+    if request.method == "POST":
+        if request.form['submit'] == 'Sign In':
+            return redirect(url_for('login'))
+        elif request.form['submit'] == 'reg':
+            return redirect(url_for('reg'))
+        elif request.form['submit'] == 'contact':
+            return  redirect(url_for('login'))
+    return render_template('index1.html',name=name)
+
 
 
 
 
 
 @app.route('/booklist',methods=['GET', 'POST'])
-def showbook():
+def show():
     if request.method == "POST":
         if request.form['submit'] == 'add':
 
@@ -159,14 +206,21 @@ def reg():
         if request.form['submit_button'] == 'Doregister':
             mail = request.form['regEmail']
             password = request.form['regPass']
+            batch=request.form['regBatch']
+            name=request.form['regName']
             match=request.form['regPass2']
+            phone=request.form['regPhone']
             if(password !=match):
                 return render_template('my-account.html', us=mat)
             elif(password==match):
                 try:
+
                     user = auth.create_user_with_email_and_password(mail, password)
                     auth.get_account_info(user['idToken'])
+                    #db.child("User").child(mail).push({)
+                    db.child("User").child(name).push({"name": name, "email": mail, "phone": phone, "batch": batch})
 
+                    #db.child("User").child("mithila.1217@gmail.com").push({"name": name, "email": mail, "phone":phone, "batch":batch})
                     return redirect("http://www.facebook.com", code=302)
                 except:
                     return render_template('my-account.html', us=unsuccessful)
@@ -178,9 +232,16 @@ def reg():
             Login_email = request.form['user']
             Login_password = request.form['pass']
             try:
+                n=""
                 auth.sign_in_with_email_and_password(Login_email, Login_password)
+                data = db.child("User").get()
+                d = data.val()
+                for x, y in d.items():
+                    for val in y.values():
+                        if (val['email'] == Login_email):
+                            n = x
 
-                return redirect("http://www.youtube.com", code=303)
+                return redirect(url_for('profile',name=n))
             except:
                 return render_template('login.html', us=unsuccessfulLogin)
 
@@ -194,9 +255,16 @@ def login():
         email = request.form['uname']
         password = request.form['pass']
         try:
+            n=""
             auth.sign_in_with_email_and_password(email, password)
+            data = db.child("User").get()
+            d = data.val()
+            for x, y in d.items():
+               for val in y.values():
+                    if (val['email'] == email):
+                        n=x
 
-            return redirect("http://www.youtube.com", code=302)
+            return redirect(url_for(index,name=x))
 
         except:
             return render_template('login.html', us=unsuccessfulLogin)
@@ -204,31 +272,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/registration', methods=['GET', 'POST'])
-def reg():
-    unsuccessful = 'Please check your info'
-    successful = 'Registration successful'
-    mat="Password doesnot match"
-    if request.method == 'POST':
-        mail = request.form['email']
-        password = request.form['psw']
-        user=request.form['name']
-        batch=request.form['batch']
-        match=request.form['psw-repeat']
-        if(password !=match):
-            return render_template('registration.html', us=mat)
-        elif(password==match):
-            try:
 
-                user = auth.create_user_with_email_and_password(mail, password)
-                auth.get_account_info(user['idToken'])
-
-                return redirect(url_for('home'))
-            except:
-                return render_template('registration.html', us=unsuccessful)
-
-
-    return render_template('registration.html')
 
 
 # @app.route('/signup_helper', methods=["GET", "POST"])
